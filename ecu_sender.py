@@ -8,7 +8,7 @@ with open('ecu_config.yaml') as f:
 sender = Bus(interface="socketcan", channel="vcan0", bitrate=config["can"]["bitrate"], can_filters=config["filters"], receive_own_messages=True)
 logger = Bus(interface="socketcan", channel="vcan0", bitrate=config["can"]["bitrate"], can_filters=config["filters"])
 
-doors_locked = {}
+state = 1
 
 def log_file_thread():
     with open("ecu_logs.txt", "a") as logfile:
@@ -34,24 +34,22 @@ try :
     while True:
 
         user_input = input("Enter the command: ").lower()
-        cmd = config["commands"].get(user_input)
-        doors = cmd["data"][1]
-        state = doors_locked.get(user_input,0)
-        confirmation_bit = 1 if state==1 and user_input in ["lock"] else 0
-        if user_input == "unlock" and state == 0:
-            confirmation_bit = 1
-        msg_bit=cmd["data"][:2] + [confirmation_bit]
-        print(msg_bit)
-        if cmd:
-            msg = can.Message(arbitration_id=cmd["arbitrary_id"], data=msg_bit, is_extended_id=False)
-    
-            try:
-                sender.send(msg)
-                print(f'Message Sent on {sender.channel}')
-            
-            except can.CanError as e:
-                print("Failed Reason: ",e ) 
-
+        cmd = config["commands"].get(user_input)        
+        if state == 1 and user_input in "lock":
+            print("Already Locked")
+        elif state == 1 and user_input in "unlock":
+            state = 0
+            cmd["data"][2] = state
+            msg = can.Message(arbitration_id=cmd["arbitrary_id"], data=cmd["data"], is_extended_id=False)
+            sender.send(msg)
+        elif state == 0 and user_input in "lock":
+            state = 1
+            cmd["data"][2] = state
+            msg = can.Message(arbitration_id=cmd["arbitrary_id"], data=cmd["data"], is_extended_id=False)
+            sender.send(msg)
+        else:
+            print("Already Unlocked")
+             
 except KeyboardInterrupt:
     print("\n Keyboard Interrupted!")
 

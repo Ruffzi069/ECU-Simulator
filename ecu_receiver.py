@@ -9,7 +9,7 @@ print("Reciever Started.......")
 receiver = Bus(interface="socketcan", channel="vcan0", bitrate=config["can"]["bitrate"], can_filters=config["filters"], receive_own_messages=True)
 logger = Bus(interface="socketcan", channel="vcan0", bitrate=config["can"]["bitrate"], can_filters=config["filters"])
 
-doors_locked = {}
+state = None
 
 def log_file_thread():
     with open("ecu_logs.txt", "a") as logfile:
@@ -38,12 +38,15 @@ try:
         if msg is None:
             continue
             print("No Messages Now!")
+
         for name,cmd in config["commands"].items():
 
             if msg.arbitration_id == cmd["arbitrary_id"]:
                 if msg.data == bytearray(cmd["data"]):
                     message = cmd["response"]
+                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
                     try:
+                        if
                         response = cmd["response"].format(doors=cmd["data"][1])
                     except KeyError:
                         response = message
