@@ -38,19 +38,14 @@ try:
         if msg is None:
             continue
             print("No Messages Now!")
-
+        print(f"MESSAGE RAW : [ARB_ID: {msg.arbitration_id}, DATA: {msg.data}]")
         for name,cmd in config["commands"].items():
 
             if msg.arbitration_id == cmd["arbitrary_id"]:
                 if msg.data == bytearray(cmd["data"]):
                     message = cmd["response"]
                     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
-                    try:
-                        if
-                        response = cmd["response"].format(doors=cmd["data"][1])
-                    except KeyError:
-                        response = message
-                    print(f'Message : {response}')
+                    print(f'[ {timestamp} ] Message : {message}')
 
 except KeyboardInterrupt:
     print("\nKeyboard Interrupted!")

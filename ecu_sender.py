@@ -42,9 +42,15 @@ try :
             cmd["data"][2] = state
             msg = can.Message(arbitration_id=cmd["arbitrary_id"], data=cmd["data"], is_extended_id=False)
             sender.send(msg)
+            print(f"Sent Message: ID={hex(msg.arbitration_id)} Data={msg.data}")
         elif state == 0 and user_input in "lock":
             state = 1
             cmd["data"][2] = state
+            msg = can.Message(arbitration_id=cmd["arbitrary_id"], data=cmd["data"], is_extended_id=False)
+            sender.send(msg)
+            print(f"Sent Message: ID={hex(msg.arbitration_id)} Data={msg.data}")
+
+        elif user_input in "horn":
             msg = can.Message(arbitration_id=cmd["arbitrary_id"], data=cmd["data"], is_extended_id=False)
             sender.send(msg)
         else:

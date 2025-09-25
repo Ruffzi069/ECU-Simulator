@@ -16,12 +16,12 @@ filters:
 commands:
   lock:
       arbitrary_id: 0x451
-      data: [1,4,0]
-      response: "{doors} doors are LOCKED"
+      data: [1,4,1]
+      response: "4 doors are LOCKED"
   unlock:
       arbitrary_id: 0x451
       data: [0,4,0]
-      response: "{doors} doors are UNLOCKED"
+      response: "4 doors are UNLOCKED"
   horn:
       arbitrary_id: 0x651
       data: [1,2,15]
